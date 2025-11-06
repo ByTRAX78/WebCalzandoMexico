@@ -1,0 +1,45 @@
+# docker-compose.yml
+services:
+  # 1. Servicio de Redis
+  redis:
+    image: redis:alpine
+    container_name: calzando-redis
+    ports:
+      - "6379:6379" # Expone Redis a tu máquina local
+    networks:
+      - calzando-network
+    # Chequeo de salud: espera a que Redis esté listo
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  # 2. Servicio de Backend
+  backend:
+    container_name: calzando-backend
+    build:
+      # Construye desde el directorio actual (donde está este archivo)
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000" # Expone el puerto 3000 del backend a tu máquina
+    networks:
+      - calzando-network
+    environment:
+      # Pasa la configuración de Redis al backend
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PORT=3000
+    # Dependencia: No inicies hasta que Redis esté saludable
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    # El HEALTHCHECK de tu Dockerfile se usará automáticamente
+
+# Red común para que los contenedores se comuniquen por nombre
+networks:
+  calzando-network:
+    driver: bridge

@@ -8,14 +8,14 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Instalar dependencias de producción
-RUN npm ci --only=production
+RUN npm install --omit=dev
 
 # Copiar el resto del código de la aplicación
-# (Error corregido: solo necesitas un COPY .)
 COPY . .
 
-# Exponer el puerto (asumiendo que tu app Express usa el 3000)
-# Esto es solo documentación; tu app debe LEER process.env.PORT
+# (NUEVA LÍNEA) Instalar curl, que no viene en alpine por defecto
+RUN apk add --no-cache curl
+
 EXPOSE 3000
 
 # (NUEVO) Chequeo de salud

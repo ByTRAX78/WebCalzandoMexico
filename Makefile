@@ -85,3 +85,15 @@ docker-stop:
 docker-logs:
 	@echo "=== Mostrando logs de: $(CONTAINER_NAME) ==="
 	docker logs -f $(CONTAINER_NAME)
+
+
+compose-up:
+	docker-compose up -d --build
+
+# Detiene y elimina todos los contenedores de compose
+compose-down:
+	docker-compose down
+
+# Muestra los logs de TODOS los servicios (redis, back, front)
+compose-logs:
+	docker-compose logs -f
