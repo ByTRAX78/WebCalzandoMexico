@@ -1,0 +1,14 @@
+const { Router } = require('express');
+const router = Router();
+
+const userRoutes = require('./users_routes');
+const kpiRoutes = require('./kpis_routes')
+const inventoryRoutes = require('./inventory_routes')
+const gestionTareas = require('./tareas_routes')
+
+router.use('/users', userRoutes);
+router.use('/kpis', kpiRoutes)
+router.use('/inventario', inventoryRoutes)
+router.use('/tareas', gestionTareas)
+
+module.exports = router;
