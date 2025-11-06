@@ -1,0 +1,26 @@
+# Usar una imagen base ligera de Node.js
+FROM node:18-alpine
+
+# Establecer el directorio de trabajo dentro del contenedor --
+WORKDIR /usr/src/app
+
+# Copiar package.json y package-lock.json
+COPY package*.json ./
+
+# Instalar dependencias de producción
+RUN npm ci --only=production
+
+# Copiar el resto del código de la aplicación
+# (Error corregido: solo necesitas un COPY .)
+COPY . .
+
+# Exponer el puerto (asumiendo que tu app Express usa el 3000)
+# Esto es solo documentación; tu app debe LEER process.env.PORT
+EXPOSE 3000
+
+# (NUEVO) Chequeo de salud
+HEALTHCHECK --interval=30s --timeout=3s \
+  CMD curl -f http://localhost:3000/health || exit 1
+
+# Comando para iniciar la aplicación
+CMD [ "npm", "start" ]
